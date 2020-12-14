@@ -16,8 +16,8 @@ async function getEmail() {
   return emails;
 }
 
-function updateEmail(email: any) {
-  emailApiClient
+async function updateEmail(email: any) {
+  await emailApiClient
     .put(`/emails/${email.id}`, email)
     .catch(error => console.error(error));
 }

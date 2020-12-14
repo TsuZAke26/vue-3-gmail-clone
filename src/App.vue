@@ -3,7 +3,7 @@
 
   <Suspense>
     <template #default>
-      <MailTable />
+      <mail-table />
     </template>
     <template #fallback>
       Loading...

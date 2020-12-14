@@ -1,28 +1,41 @@
 <template>
   <table class="mail-table">
     <tbody>
+      <!-- Generate inbox row for each email present -->
       <tr
         v-for="email in unarchivedEmails"
         :key="email.id"
         :class="['clickable', email.read ? 'read' : '']"
-        @click="readEmail(email)"
+        @click="openEmail(email)"
       >
+        <!-- Select checkbox -->
         <td><input type="checkbox" /></td>
+
+        <!-- From address -->
         <td>{{ email.from }}</td>
+
+        <!-- Email subject & body preview -->
         <td>
           <p>
             <strong>{{ email.subject }}</strong> - {{ email.body }}
           </p>
         </td>
+
+        <!-- Received date -->
         <td class="date">
           {{ format(new Date(email.sentAt), 'MMM dd, yyyy') }}
         </td>
+
+        <!-- Arschive email button -->
         <td>
           <button @click="archiveEmail(email)">Archive</button>
         </td>
       </tr>
     </tbody>
   </table>
+
+  <!-- Full Email Display component -->
+  <mail-view v-if="openedEmail" :email="openedEmail" />
 </template>
 
 <script>
@@ -30,14 +43,17 @@ import { ref } from 'vue';
 import { format } from 'date-fns';
 
 import EmailService from '@/services/EmailService';
+import MailView from './MailView.vue';
 
 export default {
+  components: { MailView },
   async setup() {
     const emails = await EmailService.getEmail();
 
     return {
       format,
-      emails: ref(emails)
+      emails: ref(emails),
+      openedEmail: ref(null)
     };
   },
   computed: {
@@ -52,13 +68,14 @@ export default {
     }
   },
   methods: {
-    readEmail(email) {
+    async openEmail(email) {
       email.read = true;
-      EmailService.updateEmail(email);
+      await EmailService.updateEmail(email);
+      this.openedEmail = email;
     },
-    archiveEmail(email) {
+    async archiveEmail(email) {
       email.archived = true;
-      EmailService.updateEmail(email);
+      await EmailService.updateEmail(email);
     }
   }
 };
