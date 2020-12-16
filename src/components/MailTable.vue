@@ -35,7 +35,9 @@
   </table>
 
   <!-- Full Email Display component -->
-  <mail-view v-if="openedEmail" :email="openedEmail" />
+  <modal-view v-if="openedEmail" @closeModal="openedEmail = null">
+    <mail-view :email="openedEmail" />
+  </modal-view>
 </template>
 
 <script>
@@ -44,9 +46,10 @@ import { format } from 'date-fns';
 
 import EmailService from '@/services/EmailService';
 import MailView from './MailView.vue';
+import ModalView from './ModalView.vue';
 
 export default {
-  components: { MailView },
+  components: { MailView, ModalView },
   async setup() {
     const emails = await EmailService.getEmail();
 

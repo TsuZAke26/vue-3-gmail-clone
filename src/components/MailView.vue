@@ -1,6 +1,6 @@
 <template>
   <div class="email-display">
-    <!-- EMail subject -->
+    <!-- Email subject -->
     <h2 class="mb-0">
       Subject: <strong>{{ email.subject }}</strong>
     </h2>
