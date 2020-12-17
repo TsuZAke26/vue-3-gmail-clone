@@ -1,5 +1,16 @@
 <template>
   <div class="email-display">
+    <div>
+      <button @click="toggleArchive">
+        {{ email.archived ? 'Move to Inbox' : 'Archive' }} (a)
+      </button>
+      <button @click="toggleRead">
+        {{ email.read ? 'Mark Unread' : 'Mark Read' }} (r)
+      </button>
+      <button>Next</button>
+      <button>Previous</button>
+    </div>
+
     <!-- Email subject -->
     <h2 class="mb-0">
       Subject: <strong>{{ email.subject }}</strong>
@@ -19,8 +30,12 @@
 </template>
 
 <script>
+import { reactive } from 'vue';
 import { format } from 'date-fns';
 import marked from 'marked';
+
+import useKeydown from '@/composables/use-keydown';
+import EmailService from '@/services/EmailService';
 
 export default {
   props: {
@@ -29,13 +44,37 @@ export default {
       required: true
     }
   },
-  setup() {
+  setup(props) {
+    const email = reactive(props.email);
+
+    const toggleArchive = () => {
+      email.archived = !email.archived;
+      EmailService.updateEmail(email);
+    };
+
+    const toggleRead = () => {
+      email.read = !email.read;
+      EmailService.updateEmail(email);
+    };
+
+    // Setup key actions for email view
+    useKeydown([
+      {
+        key: 'a',
+        fn: toggleArchive
+      },
+      {
+        key: 'r',
+        fn: toggleRead
+      }
+    ]);
+
     return {
       format,
-      marked
+      marked,
+      toggleArchive,
+      toggleRead
     };
   }
 };
 </script>
-
-<style lang="scss" scoped></style>

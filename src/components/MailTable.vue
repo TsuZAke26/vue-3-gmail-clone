@@ -26,7 +26,7 @@
           {{ format(new Date(email.sentAt), 'MMM dd, yyyy') }}
         </td>
 
-        <!-- Arschive email button -->
+        <!-- Archive email button -->
         <td>
           <button @click="archiveEmail(email)">Archive</button>
         </td>
