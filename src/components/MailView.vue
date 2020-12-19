@@ -37,7 +37,7 @@ import marked from 'marked';
 import ChangeEmailEvent from '@/interfaces/IChangeEmailEvent';
 import Email from '@/interfaces/IEmail';
 
-import useKeydown from '@/composables/use-keydown';
+import useKeydown from '@/composables/useKeydown';
 
 export default defineComponent({
   props: {

@@ -46,11 +46,13 @@
 </template>
 
 <script>
-import { defineComponent, reactive, ref } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { format } from 'date-fns';
 
 import MailView from './MailView.vue';
 import ModalView from './ModalView.vue';
+
+import useEmailSelection from '@/composables/useEmailSelection';
 
 import EmailService from '@/services/EmailService';
 
@@ -63,21 +65,8 @@ export default defineComponent({
     // Set initial open email to nothing
     const openedEmail = ref(null);
 
-    const selected = reactive(new Set());
-    const emailSelection = {
-      emails: selected,
-      toggle(email) {
-        if (selected.has(email)) {
-          selected.delete(email);
-        } else {
-          selected.add(email);
-        }
-        console.log(selected);
-      }
-    };
-
     return {
-      emailSelection,
+      emailSelection: useEmailSelection(),
       format,
       emails: ref(emails),
       openedEmail

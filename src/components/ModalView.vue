@@ -9,7 +9,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import useKeydown from '@/composables/use-keydown';
+import useKeydown from '@/composables/useKeydown';
 
 export default defineComponent({
   setup(_, { emit }) {
