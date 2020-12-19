@@ -1,6 +1,6 @@
 import { onBeforeUnmount } from 'vue';
 
-import { KeyCombo } from '@/interfaces/IKeyCombo';
+import KeyCombo from '@/interfaces/IKeyCombo';
 
 const useKeydown = (keyCombos: KeyCombo[]) => {
   // Function containing the logic to perform on keypress

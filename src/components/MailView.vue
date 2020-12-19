@@ -2,13 +2,13 @@
   <div class="email-display">
     <div>
       <button @click="toggleArchive">
-        {{ email.archived ? 'Move to Inbox' : 'Archive' }} (a)
+        {{ email.archived ? 'Move to Inbox' : 'Archive' }} (e)
       </button>
       <button @click="toggleRead">
         {{ email.read ? 'Mark Unread' : 'Mark Read' }} (r)
       </button>
-      <button>Next</button>
-      <button>Previous</button>
+      <button @click="goToNewerEmail">Newer (k)</button>
+      <button @click="goToOlderEmail">Older (j)</button>
     </div>
 
     <!-- Email subject -->
@@ -29,43 +29,101 @@
   </div>
 </template>
 
-<script>
-import { reactive } from 'vue';
+<script lang="ts">
+import { defineComponent } from 'vue';
 import { format } from 'date-fns';
 import marked from 'marked';
 
-import useKeydown from '@/composables/use-keydown';
-import EmailService from '@/services/EmailService';
+import ChangeEmailEvent from '@/interfaces/IChangeEmailEvent';
 
-export default {
+import useKeydown from '@/composables/use-keydown';
+
+export default defineComponent({
   props: {
     email: {
       type: Object,
       required: true
     }
   },
-  setup(props) {
-    const email = reactive(props.email);
-
-    const toggleArchive = () => {
-      email.archived = !email.archived;
-      EmailService.updateEmail(email);
+  setup(props, { emit }) {
+    const toggleRead = () => {
+      const eventPayload: ChangeEmailEvent = { toggleRead: true, save: true };
+      emit('changeEmail', eventPayload);
     };
 
-    const toggleRead = () => {
-      email.read = !email.read;
-      EmailService.updateEmail(email);
+    const toggleArchive = () => {
+      const eventPayload: ChangeEmailEvent = {
+        toggleArchive: true,
+        save: true,
+        closeModal: true
+      };
+      emit('changeEmail', eventPayload);
+    };
+
+    const goToNewerEmail = () => {
+      const eventPayload: ChangeEmailEvent = { changeIndex: -1 };
+      emit('changeEmail', eventPayload);
+    };
+
+    const goToNewerEmailAndArchive = () => {
+      const eventPayload: ChangeEmailEvent = {
+        changeIndex: -1,
+        toggleArchive: true,
+        save: true
+      };
+      emit('changeEmail', eventPayload);
+    };
+
+    const goToOlderEmail = () => {
+      const eventPayload: ChangeEmailEvent = { changeIndex: 1 };
+      emit('changeEmail', eventPayload);
+    };
+
+    const goToOlderEmailAndArchive = () => {
+      const eventPayload: ChangeEmailEvent = {
+        changeIndex: 1,
+        toggleArchive: true,
+        save: true
+      };
+      emit('changeEmail', eventPayload);
     };
 
     // Setup key actions for email view
     useKeydown([
-      {
-        key: 'a',
-        fn: toggleArchive
-      },
+      // Toggle read/unread
       {
         key: 'r',
         fn: toggleRead
+      },
+
+      // Archive
+      {
+        key: 'e',
+        fn: toggleArchive
+      },
+
+      // Go to newer email
+      {
+        key: 'k',
+        fn: goToNewerEmail
+      },
+
+      // Go to older email
+      {
+        key: 'j',
+        fn: goToOlderEmail
+      },
+
+      // Archive current email and go to newer email
+      {
+        key: '[',
+        fn: goToNewerEmailAndArchive
+      },
+
+      // Archive current email and go to older email
+      {
+        key: ']',
+        fn: goToOlderEmailAndArchive
       }
     ]);
 
@@ -73,8 +131,10 @@ export default {
       format,
       marked,
       toggleArchive,
-      toggleRead
+      toggleRead,
+      goToNewerEmail,
+      goToOlderEmail
     };
   }
-};
+});
 </script>

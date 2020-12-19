@@ -8,10 +8,11 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue';
 import useKeydown from '@/composables/use-keydown';
 
-export default {
-  setup(props, { emit }) {
+export default defineComponent({
+  setup(_, { emit }) {
     // Setup key actions for when the modal is open
     useKeydown([
       {
@@ -26,5 +27,5 @@ export default {
       emit
     };
   }
-};
+});
 </script>

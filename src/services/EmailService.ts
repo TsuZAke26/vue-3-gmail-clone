@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+import Email from '@/interfaces/IEmail';
+
 const BASE_URL = 'http://localhost:3000';
 
 const emailApiClient = axios.create({
@@ -11,12 +13,14 @@ const emailApiClient = axios.create({
   }
 });
 
-async function getEmail() {
+async function getEmail(): Promise<Email[]> {
+  // Destrucutre "data" property from response
+  // and give it the name "emails"
   const { data: emails } = await emailApiClient.get('/emails');
   return emails;
 }
 
-async function updateEmail(email: any) {
+async function updateEmail(email: Email): Promise<void> {
   await emailApiClient
     .put(`/emails/${email.id}`, email)
     .catch(error => console.error(error));

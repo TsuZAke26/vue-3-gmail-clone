@@ -36,27 +36,32 @@
 
   <!-- Full Email Display component -->
   <modal-view v-if="openedEmail" @closeModal="openedEmail = null">
-    <mail-view :email="openedEmail" />
+    <mail-view :email="openedEmail" @changeEmail="changeEmail" />
   </modal-view>
 </template>
 
 <script>
-import { ref } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { format } from 'date-fns';
 
-import EmailService from '@/services/EmailService';
 import MailView from './MailView.vue';
 import ModalView from './ModalView.vue';
 
-export default {
+import EmailService from '@/services/EmailService';
+
+export default defineComponent({
   components: { MailView, ModalView },
   async setup() {
+    // Get list of emails from API endpoint
     const emails = await EmailService.getEmail();
+
+    // Set initial open email to nothing
+    const openedEmail = ref(null);
 
     return {
       format,
       emails: ref(emails),
-      openedEmail: ref(null)
+      openedEmail
     };
   },
   computed: {
@@ -72,14 +77,53 @@ export default {
   },
   methods: {
     async openEmail(email) {
-      email.read = true;
-      await EmailService.updateEmail(email);
       this.openedEmail = email;
+
+      if (email) {
+        email.read = true;
+        await EmailService.updateEmail(email);
+      }
     },
     async archiveEmail(email) {
       email.archived = true;
       await EmailService.updateEmail(email);
+    },
+    async changeEmail({
+      toggleRead,
+      toggleArchive,
+      save,
+      changeIndex,
+      closeModal
+    }) {
+      const email = this.openedEmail;
+
+      if (email) {
+        if (toggleRead) {
+          email.read = !email.read;
+        }
+
+        if (toggleArchive) {
+          email.archived = !email.archived;
+        }
+
+        if (save) {
+          await EmailService.updateEmail(email);
+        }
+      }
+
+      if (changeIndex) {
+        if (this.openedEmail) {
+          const emails = this.unarchivedEmails;
+          const currentIndex = emails.indexOf(this.openedEmail); // Vetur shows this as an error, but it isn't in practice
+          const newEmail = emails[currentIndex + changeIndex];
+          this.openEmail(newEmail);
+        }
+      }
+
+      if (closeModal) {
+        this.openedEmail = null;
+      }
     }
   }
-};
+});
 </script>
