@@ -6,23 +6,28 @@
         v-for="email in unarchivedEmails"
         :key="email.id"
         :class="['clickable', email.read ? 'read' : '']"
-        @click="openEmail(email)"
       >
         <!-- Select checkbox -->
-        <td><input type="checkbox" /></td>
+        <td>
+          <input
+            type="checkbox"
+            @click="emailSelection.toggle(email)"
+            :selected="emailSelection.emails.has(email)"
+          />
+        </td>
 
         <!-- From address -->
-        <td>{{ email.from }}</td>
+        <td @click="openEmail(email)">{{ email.from }}</td>
 
         <!-- Email subject & body preview -->
-        <td>
+        <td @click="openEmail(email)">
           <p>
             <strong>{{ email.subject }}</strong> - {{ email.body }}
           </p>
         </td>
 
         <!-- Received date -->
-        <td class="date">
+        <td class="date" @click="openEmail(email)">
           {{ format(new Date(email.sentAt), 'MMM dd, yyyy') }}
         </td>
 
@@ -41,7 +46,7 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue';
+import { defineComponent, reactive, ref } from 'vue';
 import { format } from 'date-fns';
 
 import MailView from './MailView.vue';
@@ -58,7 +63,21 @@ export default defineComponent({
     // Set initial open email to nothing
     const openedEmail = ref(null);
 
+    const selected = reactive(new Set());
+    const emailSelection = {
+      emails: selected,
+      toggle(email) {
+        if (selected.has(email)) {
+          selected.delete(email);
+        } else {
+          selected.add(email);
+        }
+        console.log(selected);
+      }
+    };
+
     return {
+      emailSelection,
       format,
       emails: ref(emails),
       openedEmail

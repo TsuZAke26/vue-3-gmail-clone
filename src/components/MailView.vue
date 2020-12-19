@@ -30,18 +30,19 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, PropType } from 'vue';
 import { format } from 'date-fns';
 import marked from 'marked';
 
 import ChangeEmailEvent from '@/interfaces/IChangeEmailEvent';
+import Email from '@/interfaces/IEmail';
 
 import useKeydown from '@/composables/use-keydown';
 
 export default defineComponent({
   props: {
     email: {
-      type: Object,
+      type: Object as PropType<Email>,
       required: true
     }
   },
