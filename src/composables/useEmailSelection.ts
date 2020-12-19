@@ -12,9 +12,21 @@ export const useEmailSelection = function() {
     }
   };
 
+  const clear = () => {
+    emails.clear();
+  };
+
+  const addMultiple = (newEmails: Email[]) => {
+    newEmails.forEach((email: Email) => {
+      emails.add(email);
+    });
+  };
+
   return {
     emails,
-    toggle
+    toggle,
+    clear,
+    addMultiple
   };
 };
 

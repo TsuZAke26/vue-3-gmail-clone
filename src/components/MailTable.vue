@@ -1,5 +1,7 @@
 <template>
   <table class="mail-table">
+    <bulk-action-bar :emails="emails" />
+
     <tbody>
       <!-- Generate inbox row for each email present -->
       <tr
@@ -12,7 +14,7 @@
           <input
             type="checkbox"
             @click="emailSelection.toggle(email)"
-            :selected="emailSelection.emails.has(email)"
+            :checked="emailSelection.emails.has(email)"
           />
         </td>
 
@@ -51,13 +53,14 @@ import { format } from 'date-fns';
 
 import MailView from './MailView.vue';
 import ModalView from './ModalView.vue';
+import BulkActionBar from '@/components/BulkActionBar.vue';
 
 import useEmailSelection from '@/composables/useEmailSelection';
 
 import EmailService from '@/services/EmailService';
 
 export default defineComponent({
-  components: { MailView, ModalView },
+  components: { MailView, ModalView, BulkActionBar },
   async setup() {
     // Get list of emails from API endpoint
     const emails = await EmailService.getEmail();
