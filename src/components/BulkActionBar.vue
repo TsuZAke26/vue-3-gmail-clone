@@ -52,14 +52,16 @@ export default defineComponent({
 
     // Get props in reactive form & destructure to get the prop desired
     const { emails } = toRefs(props);
-    const totalEmails = emails.value.length;
+    const totalEmails = computed(() => emails.value.length);
 
     const allEmailsSelected = computed(
-      () => numberSelected.value === totalEmails
+      () => numberSelected.value === totalEmails.value
     );
 
     const someEmailsSelected = computed(() => {
-      return numberSelected.value > 0 && numberSelected.value < totalEmails;
+      return (
+        numberSelected.value > 0 && numberSelected.value < totalEmails.value
+      );
     });
 
     const bulkSelect = function() {

@@ -4,6 +4,8 @@ import Email from '@/interfaces/IEmail';
 
 import EmailService from '@/services/EmailService';
 
+// Can be used throughout the whole app
+// due to being reactive but outside the below function
 const emails: Set<Email> = reactive(new Set());
 
 export const useEmailSelection = () => {

@@ -1,10 +1,26 @@
 <template>
-  <bulk-action-bar :emails="emails" />
+  <div>
+    <button
+      @click="selectScreen('inbox')"
+      :disabled="selectedScreen === 'inbox'"
+    >
+      Inbox
+    </button>
+    <button
+      @click="selectScreen('archived')"
+      :disabled="selectedScreen === 'archived'"
+    >
+      Archived
+    </button>
+  </div>
+
+  <bulk-action-bar :emails="filteredEmails" />
+
   <table class="mail-table">
     <tbody>
       <!-- Generate inbox row for each email present -->
       <tr
-        v-for="email in unarchivedEmails"
+        v-for="email in filteredEmails"
         :key="email.id"
         :class="['clickable', email.read ? 'read' : '']"
       >
@@ -68,7 +84,8 @@ export default defineComponent({
       emailSelection: useEmailSelection(),
       format,
       emails: ref(emails),
-      openedEmail: ref(null)
+      openedEmail: ref(null),
+      selectedScreen: ref('inbox')
     };
   },
   computed: {
@@ -78,8 +95,12 @@ export default defineComponent({
         return email1.sentAt < email2.sentAt ? 1 : -1;
       });
     },
-    unarchivedEmails() {
-      return this.sortedEmails.filter(email => !email.archived);
+    filteredEmails() {
+      if (this.selectedScreen === 'inbox') {
+        return this.sortedEmails.filter(email => !email.archived);
+      } else {
+        return this.sortedEmails.filter(email => email.archived);
+      }
     }
   },
   methods: {
@@ -121,7 +142,7 @@ export default defineComponent({
       if (changeIndex) {
         if (this.openedEmail) {
           const emails = this.unarchivedEmails;
-          const currentIndex = emails.indexOf(this.openedEmail); // Vetur shows this as an error, but it isn't in practice
+          const currentIndex = emails.indexOf(this.openedEmail);
           const newEmail = emails[currentIndex + changeIndex];
           this.openEmail(newEmail);
         }
@@ -130,6 +151,10 @@ export default defineComponent({
       if (closeModal) {
         this.openedEmail = null;
       }
+    },
+    selectScreen(newScreen) {
+      this.selectedScreen = newScreen;
+      this.emailSelection.clear();
     }
   }
 });
