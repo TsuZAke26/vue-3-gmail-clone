@@ -1,7 +1,6 @@
 <template>
+  <bulk-action-bar :emails="emails" />
   <table class="mail-table">
-    <bulk-action-bar :emails="emails" />
-
     <tbody>
       <!-- Generate inbox row for each email present -->
       <tr
@@ -65,14 +64,11 @@ export default defineComponent({
     // Get list of emails from API endpoint
     const emails = await EmailService.getEmail();
 
-    // Set initial open email to nothing
-    const openedEmail = ref(null);
-
     return {
       emailSelection: useEmailSelection(),
       format,
       emails: ref(emails),
-      openedEmail
+      openedEmail: ref(null)
     };
   },
   computed: {
